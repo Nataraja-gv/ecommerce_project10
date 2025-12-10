@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routers/auth-router");
 const profileRouter = require("./routers/profile-router");
+const categoryRouter = require("./routers/category-router");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", categoryRouter);
 
 const StartServer = async () => {
   try {
