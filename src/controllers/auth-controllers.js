@@ -99,9 +99,9 @@ const verfilyOTP = async (req, res) => {
 
     const auth_token = await saveUser.GetJWT();
     res.cookie("auth_token", auth_token);
-
     res.status(200).json({
       message: "OTP Verified Successfully",
+      data: existingUser,
     });
   } catch (error) {
     res.status(404).json({ message: error?.message });
@@ -147,4 +147,15 @@ const resendOtp = async (req, res) => {
   }
 };
 
-module.exports = { authSignup, verfilyOTP, resendOtp };
+const authLogout = async (req, res) => {
+  try {
+    res.clearCookie("auth_token", null, { expires: Date.now() });
+    res.status(200).json({
+      message: "Logged Out Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { authSignup, verfilyOTP, resendOtp, authLogout };
