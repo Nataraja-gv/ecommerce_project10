@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routers/auth-router");
 const profileRouter = require("./routers/profile-router");
 const categoryRouter = require("./routers/category-router");
+const productRouter = require("./routers/product-router");
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -22,6 +23,7 @@ app.use(
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", categoryRouter);
+app.use("/", productRouter);
 
 const StartServer = async () => {
   try {

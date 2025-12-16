@@ -135,7 +135,7 @@ const resendOtp = async (req, res) => {
       `,
     };
 
-    (existingUser.otp = otp), (existingUser.otp_expire = otpExpire);
+    (existingUser.otp = otp),  (existingUser.otp_expire = otpExpire);
     await existingUser.save();
 
     await transporter.sendMail(mailOption);
