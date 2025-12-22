@@ -152,7 +152,7 @@ const getAllProducts = async (req, res) => {
 
     limit > 15 ? 15 : limit;
     const skip = (page - 1) * limit;
-    const allproduct = await ProductModel.find().limit(limit).skip(skip);
+    const allproduct = await ProductModel.find().populate("category").sort({ createdAt: -1 }).limit(limit).skip(skip);
     const totalDocuments = await ProductModel.countDocuments();
     const totalPages = Math.ceil(totalDocuments / limit);
     res.status(201).json({
@@ -163,7 +163,7 @@ const getAllProducts = async (req, res) => {
       _payload: allproduct,
     });
   } catch (error) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
