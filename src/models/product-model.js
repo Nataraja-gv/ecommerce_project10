@@ -23,7 +23,7 @@ const ProductSchema = new mongoose.Schema(
     product_images: [
       {
         image_link: { type: String, required: true },
-        image_key: { type: String, required: true },
+        image_key: { type: String, },
       },
     ],
     stock: {

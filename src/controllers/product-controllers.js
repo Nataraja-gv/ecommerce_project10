@@ -89,7 +89,7 @@ const editProducts = async (req, res) => {
       product_images,
       status,
     } = req.body;
-    console.log(product_images);
+
     // Validate category ONLY if provided
     if (category) {
       const existingCategory = await CategoryModel.findById(category);
@@ -103,16 +103,27 @@ const editProducts = async (req, res) => {
         .status(400)
         .json({ message: "product price should less than MRP price" });
     }
-    // Handle images
+
+    let updateImages = [];
+
+    if (product_images) {
+      let existingImages = [];
+      if (typeof product_images === "string") {
+        existingImages = [product_images];
+      } else if (Array.isArray(product_images)) {
+        existingImages = product_images;
+      }
+
+      updateImages = existingImages?.map((item) => ({
+        image_link: item,
+      }));
+    }
+
     if (req.files && req.files.length > 0) {
-      existingProduct.product_images = req.files.map((file) => ({
-        image_link: file.location,
-        image_key: file.key,
+      newImages = req.files.map((item) => ({
+        image_link: item.location,
       }));
-    } else if (product_images) {
-      existingProduct.product_images = product_images.map((img) => ({
-        image_link: img,
-      }));
+      updateImages = [...updateImages, ...newImages];
     }
 
     // Update fields safely
@@ -132,7 +143,7 @@ const editProducts = async (req, res) => {
           100
       );
     }
-
+    existingProduct.product_images = updateImages;
     existingProduct.status = status;
     await existingProduct.save();
 
@@ -152,7 +163,11 @@ const getAllProducts = async (req, res) => {
 
     limit > 15 ? 15 : limit;
     const skip = (page - 1) * limit;
-    const allproduct = await ProductModel.find().populate("category").sort({ createdAt: -1 }).limit(limit).skip(skip);
+    const allproduct = await ProductModel.find()
+      .populate("category")
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip);
     const totalDocuments = await ProductModel.countDocuments();
     const totalPages = Math.ceil(totalDocuments / limit);
     res.status(201).json({
@@ -188,6 +203,5 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = { addProducts, editProducts, getAllProducts, deleteProduct };
