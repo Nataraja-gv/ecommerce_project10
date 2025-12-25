@@ -8,6 +8,8 @@ const authRouter = require("./routers/auth-router");
 const profileRouter = require("./routers/profile-router");
 const categoryRouter = require("./routers/category-router");
 const productRouter = require("./routers/product-router");
+const addressRouter = require("./routers/address-router");
+const cartRouter = require("./routers/cart-router");
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", categoryRouter);
 app.use("/", productRouter);
+app.use("/", addressRouter);
+app.use("/", cartRouter);
 
 const StartServer = async () => {
   try {
