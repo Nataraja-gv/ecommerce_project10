@@ -97,12 +97,17 @@ const getAllCategoriesControllers = async (req, res) => {
     let page = parseInt(req.query.page) || 1;
     limit = limit > 15 ? 15 : limit;
     const skip = (page - 1) * limit;
+    const paginationFalse = req.query.pagination !== "false";
+     let categories_query = CategoryModel.find();
 
-    const categories = await CategoryModel.find().limit(limit).skip(skip);
+    if (paginationFalse) {
+      categories_query = categories_query.limit(limit).skip(skip);
+    }
+
+    const categories = await categories_query;
     const totalRecords = await CategoryModel.countDocuments();
     const totalPages = Math.ceil(totalRecords / limit);
-
-    res.status(200).json({
+   res.status(200).json({
       currectPage: page,
       recordPerPage: limit,
       totalRecords: totalRecords,

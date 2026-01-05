@@ -34,7 +34,7 @@ const addProducts = async (req, res) => {
     if (!existingCategory) {
       return res.status(400).json({ message: "Invalid category ID" });
     }
-    if (product_price > mrp) {
+    if (Number(product_price) > Number(mrp)) {
       return res
         .status(400)
         .json({ message: "product price should less than MRP price" });
@@ -163,11 +163,17 @@ const getAllProducts = async (req, res) => {
 
     limit > 15 ? 15 : limit;
     const skip = (page - 1) * limit;
-    const allproduct = await ProductModel.find()
+    const paginationFalse = req.query.pagination !== "false";
+    let allProduct_query = ProductModel.find()
       .populate("category")
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip);
+      .sort({ createdAt: -1 });
+
+    if (paginationFalse) {
+      allProduct_query = allProduct_query.limit(limit).skip(skip);
+    }
+
+    const allproduct = await allProduct_query;
+
     const totalDocuments = await ProductModel.countDocuments();
     const totalPages = Math.ceil(totalDocuments / limit);
     res.status(201).json({
