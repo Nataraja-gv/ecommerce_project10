@@ -7,60 +7,48 @@ const postCustomerCart = async (req, res) => {
     const userID = req.user._id;
     const { items } = req.body;
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: "Items are required" });
-    }
-
-    // for (const item of items) {
-    //   if (!mongoose.Types.onjectId.isValid(item.product)) {
-    //     return res.status(400).json({ message: "Invalid product ID" });
-    //   }
-    // }
-
-    const productsIds = items?.map((item) => item.product);
-    const uniqueProductIds = [...new Set(productsIds)];
-
-    const validProducts = await ProductModel.find({
-      _id: { $in: uniqueProductIds },
-    });
-
-    if (validProducts?.length !== uniqueProductIds?.length) {
+    if (!items || !items.product || !items.quantity) {
       return res
         .status(400)
-        .json({ message: "One or more products are invalid" });
+        .json({ message: "Product and quantity are required" });
+    }
+
+    const validProducts = await ProductModel.findOne({ _id: items?.product });
+
+    if (!validProducts) {
+      return res.status(400).json({ message: "Invalid product" });
     }
 
     let existingCart = await cartModel.findOne({ customer: userID });
 
     if (existingCart) {
-      items.forEach((newitem) => {
-        const existCartProducts = existingCart.items.find(
-          (olditem) => olditem.product.toString() === newitem.product
-        );
-        if (existCartProducts) {
-          existCartProducts.quantity += newitem.quantity;
-        } else {
-          existingCart.items.push({
-            product: newitem.product,
-            quantity: newitem.quantity,
-          });
-        }
-      });
+      const existingItem = existingCart.items.find(
+        (item) => item.product.toString() === items.product
+      );
+      if (existingItem) {
+        existingItem.quantity = items.quantity;
+      } else {
+        existingCart.items.push({
+          product: items.product,
+          quantity: items.quantity,
+        });
+      }
       await existingCart.save();
     } else {
       existingCart = new cartModel({
         customer: userID,
-        items: items?.map((item) => ({
-          product: item.product,
-          quantity: item.quantity,
-        })),
+        items: [
+          {
+            product: items.product,
+            quantity: items.quantity,
+          },
+        ],
       });
       await existingCart.save();
     }
 
-    res?.status(200)?.json({
-      message: "Customer cart posted successfully",
-      //   _payload: cartData,
+    res.status(200).json({
+      message: "Cart updated successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -98,12 +86,11 @@ const clearCustomerCart = async (req, res) => {
 const removeFromCartItem = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { productIds } = req.body;
-    const uniqueProductIds = [...new Set(productIds)];
+    const { product } = req.body;
 
     const cartData = await cartModel.findOneAndUpdate(
       { customer: userId },
-      { $pull: { items: { product: uniqueProductIds } } },
+      { $pull: { items: { product: product } } },
       { new: true }
     );
     res?.status(200)?.json({
