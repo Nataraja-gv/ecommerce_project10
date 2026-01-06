@@ -98,7 +98,7 @@ const editProducts = async (req, res) => {
       }
       existingProduct.category = category;
     }
-    if (product_price > mrp) {
+    if (Number(product_price) > Number(mrp)) {
       return res
         .status(400)
         .json({ message: "product price should less than MRP price" });
@@ -210,4 +210,25 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = { addProducts, editProducts, getAllProducts, deleteProduct };
+const getProductById = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+      return res.status(500).json("Product Not Found");
+    }
+    res.status(201).json({
+      _payload: product,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  addProducts,
+  editProducts,
+  getAllProducts,
+  deleteProduct,
+  getProductById,
+};

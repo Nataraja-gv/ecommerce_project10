@@ -5,6 +5,7 @@ const {
   editProducts,
   getAllProducts,
   deleteProduct,
+  getProductById,
 } = require("../controllers/product-controllers");
 const upload = require("../middleware/multer");
 
@@ -24,8 +25,8 @@ productRouter.put(
   editProducts
 );
 
-productRouter.get("/product/all",getAllProducts)
-productRouter.delete("/product/delete/:_id",deleteProduct)
-
+productRouter.get("/product/all", getAllProducts);
+productRouter.delete("/product/delete/:_id", deleteProduct);
+productRouter.get(`/product/:productId`, getProductById);
 
 module.exports = productRouter;
