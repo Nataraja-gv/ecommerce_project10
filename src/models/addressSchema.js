@@ -14,6 +14,10 @@ const customerAddressSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    selected_address: {
+      type: Boolean,
+      default: false,
+    },
     location: {
       type: {
         type: String,
@@ -26,7 +30,7 @@ const customerAddressSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const addressSchema = new mongoose.Schema(
@@ -40,7 +44,7 @@ const addressSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const addressModel = mongoose.model("Address", addressSchema);
