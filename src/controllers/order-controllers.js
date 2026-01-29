@@ -11,6 +11,7 @@ const placeTheOrder = async (req, res) => {
     const userId = user._id;
     const userEmail = user.email;
     const { address_details, payment_method, items } = req.body;
+
     const validateUser = await UserModel.findById(userId);
     if (!validateUser) {
       return res.status(404).json({ message: "User not found" });
@@ -18,7 +19,6 @@ const placeTheOrder = async (req, res) => {
 
     const addressDoc = await addressModel.find({ customerID: userId });
     const allAddresses = addressDoc.flatMap((doc) => doc.addresses);
-
     const validAddress = allAddresses.some(
       (address) => address._id.toString() === address_details,
     );
