@@ -10,6 +10,7 @@ const categoryRouter = require("./routers/category-router");
 const productRouter = require("./routers/product-router");
 const addressRouter = require("./routers/address-router");
 const cartRouter = require("./routers/cart-router");
+const orderRouter = require("./routers/order-router");
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:5173"],
     credentials: true,
-  })
+  }),
 );
 
 app.use("/", authRouter);
@@ -28,6 +29,7 @@ app.use("/", categoryRouter);
 app.use("/", productRouter);
 app.use("/", addressRouter);
 app.use("/", cartRouter);
+app.use("/", orderRouter);
 
 const StartServer = async () => {
   try {
