@@ -11,6 +11,7 @@ const productRouter = require("./routers/product-router");
 const addressRouter = require("./routers/address-router");
 const cartRouter = require("./routers/cart-router");
 const orderRouter = require("./routers/order-router");
+const razorpayRouter = require("./routers/razorpay-router");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/", productRouter);
 app.use("/", addressRouter);
 app.use("/", cartRouter);
 app.use("/", orderRouter);
+app.use("/", razorpayRouter);
 
 const StartServer = async () => {
   try {
