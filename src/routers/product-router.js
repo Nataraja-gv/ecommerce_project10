@@ -6,6 +6,7 @@ const {
   getAllProducts,
   deleteProduct,
   getProductById,
+  getProductByCategory,
 } = require("../controllers/product-controllers");
 const upload = require("../middleware/multer");
 
@@ -15,18 +16,19 @@ productRouter.post(
   "/product/add",
   userAuth,
   upload.array("product_images", 5),
-  addProducts
+  addProducts,
 );
 
 productRouter.put(
   "/product/edit/:_id",
   userAuth,
   upload.array("product_images", 5),
-  editProducts
+  editProducts,
 );
 
 productRouter.get("/product/all", getAllProducts);
 productRouter.delete("/product/delete/:_id", deleteProduct);
 productRouter.get(`/product/:productId`, getProductById);
+productRouter.get(`/products/category/:categoryId`, getProductByCategory);
 
 module.exports = productRouter;

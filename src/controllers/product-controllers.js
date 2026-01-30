@@ -140,7 +140,7 @@ const editProducts = async (req, res) => {
       existingProduct.discount_percentage = Math.round(
         ((existingProduct.mrp - existingProduct.product_price) /
           existingProduct.mrp) *
-          100
+          100,
       );
     }
     existingProduct.product_images = updateImages;
@@ -224,6 +224,21 @@ const getProductById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const getProductByCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+    const products = await ProductModel.find({ category: categoryId });
+    // if (!products || products.length === 0) {
+    //   return res.status(404).json({ message: "Products Not Found" });
+    // }
+     console.log(products);
+    res.status(201).json({
+      _payload: products,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   addProducts,
@@ -231,4 +246,5 @@ module.exports = {
   getAllProducts,
   deleteProduct,
   getProductById,
+  getProductByCategory
 };
