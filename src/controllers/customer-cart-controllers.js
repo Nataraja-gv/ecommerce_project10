@@ -23,7 +23,7 @@ const postCustomerCart = async (req, res) => {
 
     if (existingCart) {
       const existingItem = existingCart.items.find(
-        (item) => item.product.toString() === items.product
+        (item) => item.product.toString() === items.product,
       );
       if (existingItem) {
         existingItem.quantity = items.quantity;
@@ -91,11 +91,44 @@ const removeFromCartItem = async (req, res) => {
     const cartData = await cartModel.findOneAndUpdate(
       { customer: userId },
       { $pull: { items: { product: product } } },
-      { new: true }
+      { new: true },
     );
     res?.status(200)?.json({
       message: "Items removed from cart successfully",
       _payload: cartData,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const addAllCartItems = async (req, res) => {
+  try {
+    const userID = req.user._id;
+    const { items } = req.body;
+    let existingCart = await cartModel.findOne({ customer: userID });
+
+    const arrayItems = Array.isArray(items)
+      ? items.map((item) => {
+          return {
+            product: item.product,
+            quantity: item.quantity,
+          };
+        })
+      : [];
+
+    if (existingCart) {
+      existingCart.items = [...existingCart.items, ...arrayItems];
+      await existingCart.save();
+    } else {
+      const newCart = new cartModel({
+        customer: userID,
+        items: arrayItems,
+      });
+      await newCart.save();
+    }
+    res.status(200).json({
+      message: "All cart items added successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -106,4 +139,5 @@ module.exports = {
   getCustomerCart,
   clearCustomerCart,
   removeFromCartItem,
+  addAllCartItems,
 };
