@@ -13,7 +13,11 @@ razorpayRouter.post(
   razorpayCreateOrder,
 );
 
-razorpayRouter.post("/api/orders/payment/verify/webhook", razorpayVerifyPayment);
+app.post(
+  "/api/orders/payment/verify/webhook",
+  express.raw({ type: "application/json" }),
+  razorpayVerifyPayment
+);
  
 
 module.exports = razorpayRouter;
