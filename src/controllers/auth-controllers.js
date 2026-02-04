@@ -98,7 +98,11 @@ const verfilyOTP = async (req, res) => {
     const saveUser = await existingUser.save();
 
     const auth_token = await saveUser.GetJWT();
-    res.cookie("auth_token", auth_token);
+    res.cookie("auth_token", auth_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
     res.status(200).json({
       message: "OTP Verified Successfully",
       data: existingUser,
@@ -135,7 +139,7 @@ const resendOtp = async (req, res) => {
       `,
     };
 
-    (existingUser.otp = otp),  (existingUser.otp_expire = otpExpire);
+    ((existingUser.otp = otp), (existingUser.otp_expire = otpExpire));
     await existingUser.save();
 
     await transporter.sendMail(mailOption);
