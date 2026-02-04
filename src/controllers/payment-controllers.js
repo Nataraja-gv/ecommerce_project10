@@ -99,20 +99,18 @@ const razorpayCreateOrder = async (req, res) => {
 
 const razorpayVerifyPayment = async (req, res) => {
   try {
-    console.log("webhook1");
-    const webhookSignature = req.get("X-Razorpay-Signature");
+    console.log(ecommerce_project10,"ecommerce_project10")
+     webhookSignature = req.get("X-Razorpay-Signature");
     const validWebhookSignature = validateWebhookSignature(
-      req.body,
+      JSON.stringify(req.body),
       webhookSignature,
       process.env.Razorpay_webhookSecret,
     );
     if (!validWebhookSignature) {
       return res.status(400).json({ message: "Invalid webhook signature" });
     }
+     console.log(ecommerce_project11,"ecommerce_project10")
     const paymentDetails = req.body.payload.payment.entity;
-    
-    console.log(paymentDetails, " paymentDetails");
-
     const order = await OrderModel.findOne({
       "razorpayDetails.orderId": paymentDetails?.order_id,
     }).populate("items.product");
@@ -124,7 +122,7 @@ const razorpayVerifyPayment = async (req, res) => {
       paymentDetails?.status === "captured" ? "Paid" : "Failed";
     order.razorpayDetails.paymentId = paymentDetails.id;
     order.razorpayDetails.signature = webhookSignature;
-    console.log(order, "order");
+
     await order.save();
     res.status(200).json({ message: "webhook received successfully" });
   } catch (error) {
