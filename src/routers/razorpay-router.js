@@ -15,13 +15,7 @@ razorpayRouter.post(
 
 razorpayRouter.post(
   "/orders/payment/verify/webhook",
-  async (req, res, next) => {
-    console.log(
-      "/api/orders/payment/verify/webhook",
-      "/api/orders/payment/verify/webhook",
-    );
-    next();
-  },
+
   razorpayVerifyPayment,
 );
 
