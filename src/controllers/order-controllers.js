@@ -84,4 +84,19 @@ const placeTheOrder = async (req, res) => {
   }
 };
 
-module.exports = { placeTheOrder };
+const AllOrderList = async(req, res) => {
+  try {
+    const orderList = await OrderModel.find()
+      .populate("address_details")
+      .populate("customer_details")
+      .populate("items.product");
+
+    res?.status(200).json({ message: "All Order List Successfully", data: orderList });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+module.exports = { placeTheOrder , AllOrderList };
